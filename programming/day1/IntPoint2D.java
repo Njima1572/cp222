@@ -1,4 +1,7 @@
-
+/*
+Kochi Nakajima - 11/27/2017
+CP222 daily assignment day1
+*/
 
 public class IntPoint2D implements IIntPoint2D{
   int x;
@@ -32,7 +35,7 @@ public class IntPoint2D implements IIntPoint2D{
     return "(" + this.getX() + "," + this.getY() + ")";
   }
 
-  public boolean equals(IIntPoint2D o){
+  public boolean equals(IntPoint2D o){
     return (this.getX() == o.getX() && this.getY() == o.getY());
   }
 
