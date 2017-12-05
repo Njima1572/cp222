@@ -1,6 +1,6 @@
 public class DoubleLinkList<T> implements IList<T>{
 
-  int head;
+  final int head;
   int tail;
   int count;
   IDLink<T> curr;
@@ -11,14 +11,14 @@ public class DoubleLinkList<T> implements IList<T>{
     head = 0;
     tail = 0;
     count = 0;
-    curr = null;
+    curr = new Cell<T>(null, null, null);
     first = curr;
     last = curr;
   }
 
   public void insert(int idx, T v){
-    IDLink<T> newLink = new DoubleLinkList<T>(v, null, null);
-    ISLink<T> temp = curr;
+    IDLink<T> newLink = new Cell<T>(v, null, null);
+    IDLink<T> temp = curr;
     if(first.equals(null)){
       first = newLink;
       last = newLink;
@@ -39,13 +39,22 @@ public class DoubleLinkList<T> implements IList<T>{
   }
 
   public void append(T v){
-    IDLink<T> newLink = new DoubleLinkList<T>(v, null, null);
-    this.jumpToTail();
-    curr.setNext(newLink);
-    newLink.setPrev(curr);
-    last = newLink;
-    curr = last;
-    tail++;
+    IDLink<T> newLink = new Cell<T>(v, null, null);
+    if(this.size() == 0){
+      first = newLink;
+      last = newLink;
+      curr = newLink;
+      tail++;
+      count = tail;
+    }else{
+      jumpToTail();
+      curr.setNext(newLink);
+      newLink.setPrev(curr);
+      last = newLink;
+      curr = last;
+      tail++;
+      count = tail;
+    }
   }
 
   public void remove(){
@@ -53,11 +62,13 @@ public class DoubleLinkList<T> implements IList<T>{
       first = curr.getNext();
       first.setPrev(null);
       tail--;
+
     }else if(curr.equals(last)){
       this.prev();
       curr.setNext(null);
-      last = curr;
       tail--;
+      last = curr;
+      count = tail;
     }else{
       IDLink<T> temp = curr.getNext();
       curr.getNext().setPrev(curr.getPrev());
@@ -65,6 +76,7 @@ public class DoubleLinkList<T> implements IList<T>{
       curr = null;
       curr = temp;
       tail--;
+
     }
   }
 
@@ -91,10 +103,9 @@ public class DoubleLinkList<T> implements IList<T>{
 
   public void move(int sidx, int didx){
     IDLink<T> source;
-    IDLink<T> dist;
+    IDLink<T> dest;
     IDLink<T> temp = curr;
     int tempCount = count;
-
     //get Source cell
     jumpToHead();
     while(count < sidx){
@@ -110,6 +121,7 @@ public class DoubleLinkList<T> implements IList<T>{
     dest = curr;
 
     if(sidx < didx){ //source is after destination dp - d - s - dn // sp - sn
+      System.out.println("tail, head : " + tail + " " + head);
       if(sidx == head){ // first - sn // dp - d - s - dn
         source.getNext().setPrev(null);
         first = source.getNext();
@@ -139,7 +151,7 @@ public class DoubleLinkList<T> implements IList<T>{
     }else if(didx < sidx){ //destination is after source dp - s - d - dn // sp - sn
       if(didx == head){// s - d - dn // sp - sn
         source.getPrev().setNext(source.getNext());
-        source.getNext().setPrev(source.setPrev());
+        source.getNext().setPrev(source.getPrev());
         source.setNext(dest);
         dest.setPrev(source);
         source.setPrev(null);
@@ -155,7 +167,7 @@ public class DoubleLinkList<T> implements IList<T>{
 
       }else{
         source.getPrev().setNext(source.getNext());
-        source.getNext().setPrev(source.setPrev());
+        source.getNext().setPrev(source.getPrev());
         source.setPrev(dest.getPrev());
         dest.setPrev(source);
         dest.getPrev().setNext(source);
@@ -165,6 +177,21 @@ public class DoubleLinkList<T> implements IList<T>{
     curr = temp;
     count = tempCount;
   }
+  // public void move(int sidx, int didx){
+  //   if(sidx == didx){
+  //
+  //   }
+  //   else{
+  //     IDLink<T> source = first;
+  //     int index = 0;
+  //     while(index < sidx){
+  //       source = source.getNext();
+  //       index++;
+  //     }
+  //     remove(sidx);
+  //     insert(didx, source.getValue());
+  //   }
+  // }
 
   public T fetch(){
     return curr.getValue();
@@ -174,23 +201,27 @@ public class DoubleLinkList<T> implements IList<T>{
     count = 0;
     curr = first;
     while(count < idx){
-      curr = curr.getNext();
-      count++;
+      next();
     }
     return curr.getValue();
   }
 
   public void next(){
-    curr.setPrev(curr);
-    curr = next;
-    curr.setNext(curr.getNext());
+    if(curr.equals(last)){
+
+    }else{
+      curr = curr.getNext();
+      count++;
+    }
   }
 
   public void prev(){
-    curr = prev;
-    curr.setNext(curr);
-    curr.setPrev(curr.getPrev());
-    count--;
+    if(curr.equals(first)){
+
+    }else{
+      curr = curr.getPrev();
+      count--;
+    }
   }
 
   public void jumpToTail(){
@@ -207,13 +238,13 @@ public class DoubleLinkList<T> implements IList<T>{
     return (tail - head);
   }
 
-  public static Cell<T> implements IDLink<T>{
+private class Cell<T> implements IDLink<T>{
     T value;
     IDLink<T> next;
     IDLink<T> prev;
 
     public Cell(T v, Cell<T> p, Cell<T> n){
-      vlue = v;
+      value = v;
       next = n;
       prev = p;
 

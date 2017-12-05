@@ -25,12 +25,15 @@ public class SingleLinkList<T> implements IList<T>{
     ISLink<T> indexPrev;
     jumpToHead();
     if(idx == 1){
+
       indexPrev = first;
     }else if(idx == 0){
+
       indexPrev = null;
     }else{
       while(count < idx - 1){
-        next();
+        curr = curr.getNext();
+        count++;
       }
       indexPrev = curr;
     }
@@ -43,18 +46,20 @@ public class SingleLinkList<T> implements IList<T>{
       last = newLink;
     }else{
       if(idx == head){
-        newLink.setNext(head);
-        head = newLink;
+        newLink.setNext(first);
+        first = newLink;
       }else if(idx == tail){
         last.setNext(newLink);
         newLink.setNext(null);
         last = newLink;
       }else{
-
+        newLink.setNext(indexPrev.getNext());
+        indexPrev.setNext(newLink);
       }
     }
     tail++;
     curr = temp;
+    count = tempCount;
   }
 
   public void append(T v){
@@ -71,41 +76,62 @@ public class SingleLinkList<T> implements IList<T>{
   }
   //removes the current index.
   public void remove(){
-    this.jumpToHead();
+    ISLink<T> temp = curr;
+    int tempCount = count;
+    ISLink<T> prev;
+    ISLink<T> next = curr.getNext();
+    // while(count < tempCount - 1){
+    //   curr = curr.getNext();
+    //   count++;
+    // }
     if(curr.equals(first)){
       first = curr.getNext();
+      count = head;
+      curr = first;
       tail--;
     }else if(curr.equals(last)){
-      this.prev();
+      while(count < tail - 1){
+        curr = curr.getNext();
+        count++;
+      }
       curr.setNext(null);
       last = curr;
       tail--;
     }else{
-      while(count < tail - 1){
-        curr.getNext();
-      }
-      curr.setNext(null);
+      this.prev();
+      curr.setNext(next);
       tail--;
     }
   }
 
   public void remove(int idx){
+    ISLink<T> indexPrev;
+    ISLink<T> temp = curr;
+    int tempCount = count;
+    jumpToHead();
+    if(idx == 1){
+      indexPrev = first;
+    }else if(idx == 0){
+      indexPrev = null;
+    }else{
+      while(count < idx - 1){
+        curr = curr.getNext();
+        count++;
+      }
+      indexPrev = curr;
+    }
+
     if(idx == head){
       first = curr.getNext();
     }else if(idx == tail){
-      prev();
-      last = curr;
-      curr.setNext(null);
+      indexPrev.setNext(null);
+      last = indexPrev;
     }else{
-      this.jumpToHead();
-      while(count < idx){
-        next();
-      }
-      ISLink<T> temp = curr.getNext().getNext();
-      curr.setNext(temp);
+      indexPrev.setNext(indexPrev.getNext().getNext());
     }
-
     tail--;
+    curr = temp;
+    count = tempCount;
   }
   //swap the element of sidx to didx
   //the pointer pointing to sidx points to didx
@@ -217,7 +243,7 @@ public class SingleLinkList<T> implements IList<T>{
 
   public void next(){
     if(curr.equals(last)){
-      System.out.println("You are already at the last");
+      // System.out.println("You are already at the last");
     }else{
       curr = curr.getNext();
       count++;
@@ -231,11 +257,13 @@ public class SingleLinkList<T> implements IList<T>{
       System.out.println("You are already at the front");
 
     }else{
-      this.jumpToHead();
       // System.out.println(count + " " + temp);
       // System.out.println(curr.getValue());
-      while(count != (temp - 1)){
-        next();
+      this.jumpToHead();
+      count = 1;
+      while(count < (temp - 1)){
+        curr = curr.getNext();
+        count++;
         // System.out.print(" " + count + " ");
       }
       // System.out.println(" " + curr.getValue());
@@ -283,16 +311,4 @@ private class Cell<T> implements ISLink<T>{
 
   }
 
-  public static void main(String[] args){
-    IList<Integer> I = new SingleLinkList<Integer>();
-    I.append(0);
-    I.append(1);
-    I.append(2);
-    I.append(3);
-    I.move(3, 2);
-    System.out.println(I.fetch(0));
-    System.out.println(I.fetch(1));
-    System.out.println(I.fetch(2));
-    System.out.println(I.fetch(3));
-  }
 }
