@@ -1,6 +1,6 @@
 /** 12/4/2017
   * Kochi Nakajima
-  * 
+  * cite - day 6 lecture
   */
 
 
