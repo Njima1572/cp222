@@ -9,11 +9,11 @@ public class BSTree<K extends Comparable<K>, V> implements IDict<K, V>{
   K[] keysArray;
 
 
+
   public BSTree(){
     root = new Node(null, null);
     curr = root;
     size = 0;
-    keysArray = (K[]) new Comparable[1000000];
 
   }
 
@@ -357,6 +357,8 @@ public class BSTree<K extends Comparable<K>, V> implements IDict<K, V>{
 
 
 
+
+
   /**
    * Returns the value associated with a particular key in the dictionary.
    * Returns null if there is no matching key.
@@ -371,10 +373,12 @@ public class BSTree<K extends Comparable<K>, V> implements IDict<K, V>{
    * Returns an array of the keys in the dictionary
    * @return array of all keys
    */
+   public K[] keys(){
+     keysArray = (K[]) new Comparable[size()];
+     root.inorder(keysArray);
+     return keysArray;
+   }
 
-  public K[] keys(){
-    return keysArray;
-  }
 
   public Node<K, V> getNode(K k){
     Node<K, V> designated;
@@ -425,12 +429,14 @@ public class BSTree<K extends Comparable<K>, V> implements IDict<K, V>{
     Node rightNode;
     boolean complete;
     Node parent;
+    int idx;
+
 
     public Node(K k, V v){
       key = k;
       value = v;
       leftNode = null;
-      // rightNode = null;
+      idx = 0;
     }
 
     public void setParent(Node p){
@@ -444,6 +450,16 @@ public class BSTree<K extends Comparable<K>, V> implements IDict<K, V>{
       return key;
     }
 
+    public void inorder(K[] arrayList){
+      if(leftNode != null){
+        leftNode.inorder(arrayList);
+      }
+      arrayList[idx] = key;
+      idx = (idx + 1) % arrayList.length;
+      if(rightNode != null){
+        rightNode.inorder(arrayList);
+      }
+    }
 
     public V getValue(){
       if(value == null){
@@ -528,6 +544,9 @@ public class BSTree<K extends Comparable<K>, V> implements IDict<K, V>{
 
     tree.remove(5);
     tree.remove(4);
+    for(int i = 0; i < 7; i++){
+      System.out.println(tree.fetch(i));
+    }
     // tree.remove(3);
     // tree.remove(2);
     for(int i = 0; i < 7; i++){
