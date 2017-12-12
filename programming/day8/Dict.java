@@ -8,6 +8,8 @@ public class Dict<K extends Comparable<K>,V> implements IDict<K, V>{
   V value;
   Item item;
   int size;
+  K[] arr;
+
   ArrayList<Item> dictionary;
 
   public Dict(){
@@ -80,9 +82,9 @@ public class Dict<K extends Comparable<K>,V> implements IDict<K, V>{
      * @return array of all keys
      */
     public K[] keys(){
-      K[] keysArray = (K[]) new Object[size];
+      K[] keysArray = (K[]) new Comparable[size()];
       for(int i = 0; i < dictionary.size(); i++){
-        keysArray[i] = (K)dictionary.get(i);
+        keysArray[i] = (K)dictionary.get(i).key;
       }
       return keysArray;
     }
@@ -107,7 +109,10 @@ public class Dict<K extends Comparable<K>,V> implements IDict<K, V>{
       d.add(6,6);
       d.add(5,5);
       d.add(2,2);
-      System.out.println(d.keys());
+      d.arr = d.keys();
+      for(int i = 0; i < d.size(); i++){
+        System.out.println(d.arr[i]);
+      }
       d.remove(1);
       for(int i = 0; i < d.size(); i++){
         System.out.println(d.fetch(i));
