@@ -56,9 +56,5 @@ public class DiGraphReader implements IGraphReader {
         for(int i=0; i<edges.length; i++) {
             System.out.println(edges[i].getSource().getValue()+" -> "+edges[i].getDestination().getValue()+"  w: "+edges[i].getWeight());
         }
-        INode[] nodes = g.getNodeSet();
-        for(int i = 0; i < nodes.length; i++){
-          System.out.println(nodes[i].getValue());
-        }
     }
 }
