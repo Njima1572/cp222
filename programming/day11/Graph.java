@@ -53,8 +53,8 @@ public class Graph<N, W> implements IGraph<N, W>{
      */
     public INode<N> addNode(N v){
       Node newNode = new Node(v); //if there is a node already, then don't add.
-      for(Node node : nodes){
-        if(node.getValue().equals(v)){
+      for(int i = 0; i < nodes.size(); i++){
+        if(nodes.get(i).getValue().equals(v)){
           return newNode;
         }
       }
@@ -134,11 +134,8 @@ public class Graph<N, W> implements IGraph<N, W>{
      * @param w weight for new edge
      */
     public void addTwoNodes(N v1, N v2, W w){
-      Node n1 = new Node(v1);
-      Node n2 = new Node(v2);
-      Edge e = new Edge(n1, n2, w);
-      nodes.add(n1);
-      nodes.add(n2);
-      edges.add(e);
+      Node n1 = (Node)addNode(v1);
+      Node n2 = (Node)addNode(v2);
+      addEdge(n1, n2, w);
     }
 }
