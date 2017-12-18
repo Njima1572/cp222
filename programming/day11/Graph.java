@@ -52,12 +52,12 @@ public class Graph<N, W> implements IGraph<N, W>{
      * @return the newly added node
      */
     public INode<N> addNode(N v){
-      Node newNode = new Node(v); //if there is a node already, then don't add.
       for(int i = 0; i < nodes.size(); i++){
         if(nodes.get(i).getValue().equals(v)){
-          return newNode;
+          return nodes.get(i);
         }
       }
+      Node newNode = new Node(v); //if there is a node already, then don't add.
       nodes.add(newNode);
       return newNode;
     }
