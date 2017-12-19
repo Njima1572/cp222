@@ -74,7 +74,6 @@ public class BreadthFirstSearcher<N, W> implements ISearcher<N, W> {
       helperGetPath2(g, s, e);
       boolean backPath = false;
       int idx = 0;
-
       if(pathFound){
         Edge[] toE = (Edge[]) g.getEdgesTo(e);
         System.out.println(toE[0].getSource().getValue() + " ← " + toE[0].getDestination().getValue());
@@ -98,12 +97,8 @@ public class BreadthFirstSearcher<N, W> implements ISearcher<N, W> {
           }
           idx++;
         }
+        pathNodes = makeAndReverseNodeList(pathEdges);
       }
-      for(int i = 0; i < pathEdges.size(); i++){
-        System.out.println(pathEdges.fetch(i).getSource().getValue() + " → " + pathEdges.fetch(i).getDestination().getValue());
-
-      }
-      pathNodes = makeAndReverseNodeList(pathEdges);
       return pathNodes;
     }
 
@@ -185,7 +180,7 @@ public class BreadthFirstSearcher<N, W> implements ISearcher<N, W> {
       IGraph g = r.read("graphfile.cs2");
       INode[] nodeset = g.getNodeSet();
       //bfs.pathExists(g, nodeset[0], nodeset[nodeset.length - 2]);
-      bfs.getPath(g, nodeset[0], nodeset[nodeset.length - 2]);
+      bfs.getPath(g, nodeset[0], nodeset[nodeset.length - 1]);
       for(int i = 0; i < bfs.pathNodes.size(); i++){
         Node noode = (Node)bfs.pathNodes.fetch(i);
         System.out.println(noode.getValue());

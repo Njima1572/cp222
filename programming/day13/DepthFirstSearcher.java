@@ -8,9 +8,16 @@ import java.io.FileNotFoundException;
  */
 public class DepthFirstSearcher<N, W> implements ISearcher<N,W> {
     static boolean pathFound;
+    IList<INode<N>> pathNodes;
+    IList<IEdge> pathEdges;
+    int count;
     IList<INode<N>> list = new ArrayList<INode<N>>();
     public DepthFirstSearcher(){
       pathFound = false;
+      pathEdges = new ArrayList<IEdge>();
+      pathNodes = new ArrayList<INode<N>>();
+      count = 0;
+
     }
     /**
      * Determines if there is a path without returning the path
@@ -59,14 +66,42 @@ public class DepthFirstSearcher<N, W> implements ISearcher<N,W> {
     public IList<INode<N>> getPath(IGraph<N,W> g, INode<N> s, INode<N> e){
       IList<INode<N>> list = new ArrayList<INode<N>>();
       helperGetPath(g, s, e);
-      INode[] nodes = g.getNodeSet();
-      for(int i = 0; i < nodes.length; i++){
-        Node node = (Node) nodes[i];
-        if(node.getVisited()){
-          list.append(nodes[i]);
+      boolean backPath = false;
+      int idx = 0;
+      if(pathFound){
+        Edge[] toE = (Edge[]) g.getEdgesTo(e);
+
+        for(int i = 0; i < toE.length; i++){
+          if(toE[i].getVisited()){
+            pathEdges.append(toE[i]);
+          }
         }
+        while(!backPath){
+          Node curr_src = (Node)pathEdges.fetch(idx).getSource();
+          if(curr_src.getValue().equals(s.getValue())){
+            backPath = true;
+          }
+          Edge[] curr_src_src = (Edge[])g.getEdgesTo(curr_src);
+          for(int i = 0; i < curr_src_src.length; i++){
+            if(curr_src_src[i].getVisited()){
+              System.out.println(curr_src_src[i].getSource().getValue() + " → " + curr_src_src[i].getDestination().getValue());
+              pathEdges.append(curr_src_src[i]);
+            }
+          }
+          idx++;
+        }
+        pathNodes = makeAndReverseNodeList(pathEdges);
       }
-      return list;
+      return pathNodes;
+    }
+
+    public IList<INode<N>> makeAndReverseNodeList(IList<IEdge> list){
+      IList<INode<N>> nooodes = new ArrayList();
+      nooodes.append(list.fetch(list.size() - 1).getSource());
+      for(int i = list.size() - 1; i > -1; i--){
+        nooodes.append(list.fetch(i).getDestination());
+      }
+      return nooodes;
     }
 
     public void helperGetPath(IGraph<N, W> g, INode<N> s, INode<N> e){
@@ -74,28 +109,60 @@ public class DepthFirstSearcher<N, W> implements ISearcher<N,W> {
         Node node = (Node)s;
         IEdge[] edgesComingOut = g.getEdgesFrom(node);
         node.visit();
+        if(edgesComingOut.length > 0){
+          for(int i = 0; i < edgesComingOut.length; i++){
+            Edge curr_edge = (Edge)edgesComingOut[i];
+            Node curr_dest = (Node)edgesComingOut[i].getDestination();
+            curr_edge.visit();
 
-        for(int i = 0; i < edgesComingOut.length; i++){
-          Edge curr_edge = (Edge)edgesComingOut[i];
-          Node curr_dest = (Node)edgesComingOut[i].getDestination();
-          System.out.println(curr_edge.getSource().getValue() + " → " + curr_dest.getValue());
-          curr_edge.visit();
-
-          if(e.getValue().equals(curr_edge.getDestination().getValue())){
-            pathFound = true;
-            Node end = (Node)e;
-            end.visit();
-            return;
-          }
-          if(!pathFound){
-            if(!curr_dest.getVisited()){
-              curr_dest.visit();
-              helperGetPath(g, curr_edge.getDestination(), e);
+            if(e.getValue().equals(curr_dest.getValue())){
+              System.out.println("Found");
+              pathFound = true;
+              Node end = (Node)e;
+              end.visit();
+              return;
             }
-            return;
+            else if(!pathFound){
+              if(!curr_dest.getVisited()){
+                curr_dest.visit();
+                helperGetPath(g, curr_dest, e);
+              }
+            }
           }
+        }else{return;}
+        count++;
+        if(count > g.getNodeSet().length*10){
+          break;
         }
       }
+      //
+      // while(!pathFound){
+      //   Node node = (Node)s;
+      //   IEdge[] edgesComingOut = g.getEdgesFrom(node);
+      //   node.visit();
+      //
+      //   for(int i = 0; i < edgesComingOut.length; i++){
+      //     System.out.println(i);
+      //     Edge curr_edge = (Edge)edgesComingOut[i];
+      //     Node curr_dest = (Node)edgesComingOut[i].getDestination();
+      //     curr_edge.visit();
+      //
+      //     if(e.getValue().equals(curr_edge.getDestination().getValue())){
+      //       pathFound = true;
+      //       Node end = (Node)e;
+      //       end.visit();
+      //       return;
+      //     }
+      //     if(!pathFound){
+      //       if(!curr_dest.getVisited()){
+      //         curr_dest.visit();
+      //         helperGetPath(g, curr_edge.getDestination(), e);
+      //       }
+      //       return;
+      //     }
+      //     return;
+      //   }
+      // }
     }
 
     public static void main(String[] args) throws Exception{
@@ -103,8 +170,8 @@ public class DepthFirstSearcher<N, W> implements ISearcher<N,W> {
       IGraph g = r.read("graphfile.cs2");
       DepthFirstSearcher d = new DepthFirstSearcher();
       INode[] nodeset = g.getNodeSet();
-      System.out.println(d.pathExists(g, nodeset[0], nodeset[nodeset.length - 2]));
-      ArrayList<Node<String>> path = (ArrayList)d.getPath(g, nodeset[0], nodeset[nodeset.length - 2]);
+      System.out.println(d.pathExists(g, nodeset[0], nodeset[nodeset.length - 1]));
+      ArrayList<Node<String>> path = (ArrayList)d.getPath(g, nodeset[0], nodeset[nodeset.length - 1]);
       for(int i = 0; i < path.size(); i++){
         System.out.println(path.fetch(i).getValue());
 
