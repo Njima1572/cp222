@@ -7,6 +7,7 @@ public class Edge<N,W> implements IEdge<N,W> {
     Node<N> source;
     Node<N> dest;
     W weight;
+    boolean visited;
 
     public Edge(Node a, Node b, W w){
       source = a;
@@ -38,6 +39,14 @@ public class Edge<N,W> implements IEdge<N,W> {
       return weight;
     }
 
+    public boolean getVisited(){
+      return visited;
+    }
+
+    public void vist(){
+      visited = true;
+    }
+
     /**
      * Test for equality of two edges.
      * Edges are equal when the node instances are exactly the same{} i.e. this.src==o.src
@@ -53,5 +62,9 @@ public class Edge<N,W> implements IEdge<N,W> {
         }
       }
       return false;
+    }
+    public String toString(){
+      String returning = "source: " + source.getValue() + " destination: " + dest.getValue();
+      return returning;
     }
 }
